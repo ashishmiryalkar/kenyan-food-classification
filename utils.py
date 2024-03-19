@@ -94,3 +94,32 @@ def get_optimizer_and_scheduler(model):
     )
 
     return optimizer, scheduler
+
+def setup_system(system_config: SystemConfiguration) -> None:
+    torch.manual_seed(system_config.seed)
+    if torch.cuda.is_available():
+        torch.backends.cudnn_benchmark_enabled = system_config.cudnn_benchmark_enabled
+        torch.backends.cudnn.deterministic = system_config.cudnn_deterministic
+
+@dataclass
+class SystemConfiguration:
+    '''
+    Describes the common system setting needed for reproducible training
+    '''
+    seed: int = 21  # seed number to set the state of all random number generators
+    cudnn_benchmark_enabled: bool = True  # enable CuDNN benchmark for the sake of performance
+    cudnn_deterministic: bool = True  # make cudnn deterministic (reproducible training)
+
+@dataclass
+class TrainingConfiguration:
+    '''
+    Describes configuration of the training process
+    '''
+    batch_size: int = 10 
+    epochs_count: int = 10  
+    init_learning_rate: float = 0.001  # initial learning rate for lr scheduler
+    log_interval: int = 5  
+    test_interval: int = 1  
+    data_root: str = "/home/ashish/opencv_neural_networks_course/project2/opencv-pytorch-classification-project-2" 
+    num_workers: int = 2  
+    device: str = 'cuda'
